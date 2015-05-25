@@ -1,5 +1,8 @@
-package src;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +105,32 @@ public class Sommet {
 		}
 		return traiter;
 	}
+	
+	public static List<Sommet> lectureFichier(String p_path) {
+		
+		ArrayList<Sommet> liste = new ArrayList<Sommet>();
+		
+		try{
+			InputStream ips = new FileInputStream(p_path); 
+			InputStreamReader ipsr = new InputStreamReader(ips);
+			BufferedReader br = new BufferedReader(ipsr);
+			String ligne;
+			String nom;
+			String index;
+			
+			while ((ligne=br.readLine())!=null){
+				nom = ligne.split(":")[0];
+				index = ligne.split(":")[1];
+				liste.add(new Sommet(nom, Integer.parseInt(index)));
+			}
+			br.close(); 
+		}		
+		catch (Exception e){
+			System.out.println(e.toString());
+		}
+		
+		return liste;
+	}
 
 	public static void main(String[] args) {
 		List<Sommet> graphe = new ArrayList<Sommet>();
@@ -123,5 +152,10 @@ public class Sommet {
 		parcours = Sommet.parcoursLargeur(graphe, s2);
 		
 		System.out.println(parcours.toString());
+		
+		
+		List<Sommet> graph2 = new ArrayList<Sommet>();
+		graph2 = lectureFichier("src/text.txt");
+		System.out.println(graph2.toString());
 	}
 }
