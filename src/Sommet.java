@@ -1,4 +1,3 @@
-package src;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -91,8 +90,12 @@ public class Sommet {
 			
 			Graph graph = new Graph();
 			graph.lectureFichier("motsdelongueur6.txt");
-			System.out.println("Le nombre de sommet est de "+graph.getSommets().size());
-			System.out.println("Le nombre d'arc est de "+graph.getArcs().size());
+			System.out.println("1) Graph construit");
+			System.out.println("2) Le nombre de sommet est de "+graph.getSommets().size());
+			System.out.println("   Le nombre d'arc est de "+graph.getArcs().size());
+			System.out.println("3) Le nombre de composantes connexes est de ");
+			System.out.println("4) Le nombre de mots sans voisin est de ");
+			System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de ");
 		}
 }
 
