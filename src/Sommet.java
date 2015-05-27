@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Sommet {
@@ -93,10 +94,11 @@ public class Sommet {
 			System.out.println("1) Graph construit");
 			System.out.println("2) Le nombre de sommet est de "+graph.getSommets().size());
 			System.out.println("   Le nombre d'arc est de "+graph.getArcs().size());
-			System.out.println("3) Le nombre de composantes connexes est de ");
-			System.out.println("4) Le nombre de mots sans voisin est de ");
-			System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de ");
-			System.out.println("6)  ");
+			List<List<Sommet>> connexe = graph.nombreComposantesConnexes();
+			System.out.println("3) Le nombre de composantes connexes est de " + connexe.size());
+			System.out.println("4) Le nombre de mots sans voisin est de " + graph.nbComposante_N_mots(connexe, 1));
+			System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de " + graph.nbComposante_N_mots(connexe, 2));
+			System.out.println("6) " + graph.nbSommet_K_Voisins());
 			ArrayList<Sommet> chaine = graph.parcoursLargeurArrange(graph.getIndexAtName("GRAPHE"), graph.getIndexAtName("CAMION"));
 			System.out.println("7) La plus courte chaine entre GRAPHE et CAMION est de "+chaine.get(0).getValeur());
 			System.out.println("   Cette chaine est composée de "+chaine.toString());
@@ -167,10 +169,6 @@ class Graph {
 	public List<Sommet> parcoursLargeur(Sommet depart) {
 		List<Sommet> temp = new ArrayList<Sommet>();
 		List<Sommet> traiter = new ArrayList<Sommet>();
-		
-		for(int i = 0; i < this.getSommets().size(); i++) {
-			this.getSommets().get(i).setMarque(false);
-		}
 		
 		depart.setMarque(true);
 		temp.add(depart);
@@ -272,12 +270,15 @@ class Graph {
 		return chemin;
 	}
 	
-	public List<List<Sommet>> nombreComposantesConnexes(List<Sommet> graphe) {
+	public List<List<Sommet>> nombreComposantesConnexes() {
 		List<List<Sommet>> result = new ArrayList<List<Sommet>>();
-		result.add(this.parcoursLargeur(graphe.get(0)));
-		for(int i=1; i < graphe.size(); i++) {
-			if(!graphe.get(i).isMarque()) {
-				result.add(this.parcoursLargeur(graphe.get(i)));
+		for(int i = 0; i < this.getSommets().size(); i++) {
+			this.getSommets().get(i).setMarque(false);
+		}
+		result.add(this.parcoursLargeur(this.getSommets().get(0)));
+		for(int i=1; i < this.getSommets().size(); i++) {
+			if(!this.getSommets().get(i).isMarque()) {
+				result.add(this.parcoursLargeur(this.getSommets().get(i)));
 			}
 		}
 		return result;
@@ -291,6 +292,14 @@ class Graph {
 			}
 		}
 		return nb;
+	}
+	
+	public HashMap<Integer, Integer> nbSommet_K_Voisins() {
+		HashMap<Integer,Integer> result = new HashMap<Integer,Integer>(); 
+		for(int i=0; i < this.getSommets().size(); i++) {
+			result.put(this.getSommets().get(i).getDegres(), result.get(this.getSommets().get(i).getDegres()) + 1);
+		}
+		return result;
 	}
 	
 	
