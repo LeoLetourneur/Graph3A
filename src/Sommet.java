@@ -27,6 +27,7 @@ public class Sommet {
 
     public void ajouterVoisin(Sommet v) {
     	sommetAdjacent.add(v);
+    	setDegres(getDegres()+1);
     }
     
     public String toString() {
@@ -86,6 +87,8 @@ public class Sommet {
 	
 	
 	
+	
+	
 	//TODO
 	public static void main(String[] args) {
 			
@@ -98,7 +101,9 @@ public class Sommet {
 		System.out.println("3) Le nombre de composantes connexes est de " + connexe.size());
 		System.out.println("4) Le nombre de mots sans voisin est de " + graph.nbComposante_N_mots(connexe, 1));
 		System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de " + graph.nbComposante_N_mots(connexe, 2));
-		System.out.println("6) " + graph.nbSommet_K_Voisins());
+		HashMap<Integer, Integer> listeDegre = graph.nbSommet_K_Voisins();
+		System.out.println("6) La liste des sommets avec k voisins (k variant de 1 à 28) :");
+		System.out.println("   Degré=NbSommet =>" + listeDegre);
 		List<Sommet> chaine = graph.parcoursLargeurArrange(graph.getIndexAtName("GRAPHE"), graph.getIndexAtName("CAMION"));
 		System.out.println("7) La plus courte chaine entre GRAPHE et CAMION est de "+chaine.get(0).getValeur());
 		System.out.println("   Cette chaine est composée de "+chaine.toString());
@@ -107,6 +112,8 @@ public class Sommet {
 		System.out.println("   Cette chaine est composée de "+chaine2.toString());
 	}
 }
+
+
 
 
 
@@ -161,35 +168,6 @@ class Graph {
 		this(new ArrayList<Sommet>(), new ArrayList<Arc>());
 	}
 	
-	public Sommet getIndexAtName(String nom) {
-		for(int i = 0; i < this.getSommets().size(); i++) {
-			if(this.getSommets().get(i).getNom().equals(nom))
-				return this.getSommets().get(i);
-		}
-		return null;
-	}
-	
-	public List<Sommet> parcoursLargeur(Sommet depart) {
-		List<Sommet> temp = new ArrayList<Sommet>();
-		List<Sommet> traiter = new ArrayList<Sommet>();
-		
-		depart.setMarque(true);
-		temp.add(depart);
-		
-		while (temp.size() > 0) {
-			Sommet currentSommet = temp.get(0);
-			for(int i = 0; i < currentSommet.getSommetAdjacent().size(); i++) {
-				if(!currentSommet.getSommetAdjacent().get(i).isMarque()) {
-					currentSommet.getSommetAdjacent().get(i).setMarque(true);
-					temp.add(currentSommet.getSommetAdjacent().get(i));
-				}
-			}
-			traiter.add(currentSommet);
-			temp.remove(currentSommet);
-		}
-		return traiter;
-	}
-	
 	public void lectureFichier(String p_path) {
 		
 		this.setSommets(new ArrayList<Sommet>());
@@ -217,8 +195,8 @@ class Graph {
 							}
 						}
 						if(cpt == 1) {
-							sommetCreer.getSommetAdjacent().add(sommetCompare);
-							sommetCompare.getSommetAdjacent().add(sommetCreer);
+							sommetCreer.ajouterVoisin(sommetCompare);
+							sommetCompare.ajouterVoisin(sommetCreer);
 							this.getArcs().add(new Arc(sommetCreer, sommetCompare));
 						}
 				}
@@ -229,6 +207,35 @@ class Graph {
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
+	}
+
+	public Sommet getIndexAtName(String nom) {
+		for(int i = 0; i < this.getSommets().size(); i++) {
+			if(this.getSommets().get(i).getNom().equals(nom))
+				return this.getSommets().get(i);
+		}
+		return null;
+	}
+	
+	public List<Sommet> parcoursLargeur(Sommet depart) {
+		List<Sommet> temp = new ArrayList<Sommet>();
+		List<Sommet> traiter = new ArrayList<Sommet>();
+		
+		depart.setMarque(true);
+		temp.add(depart);
+		
+		while (temp.size() > 0) {
+			Sommet currentSommet = temp.get(0);
+			for(int i = 0; i < currentSommet.getSommetAdjacent().size(); i++) {
+				if(!currentSommet.getSommetAdjacent().get(i).isMarque()) {
+					currentSommet.getSommetAdjacent().get(i).setMarque(true);
+					temp.add(currentSommet.getSommetAdjacent().get(i));
+				}
+			}
+			traiter.add(currentSommet);
+			temp.remove(currentSommet);
+		}
+		return traiter;
 	}
 	
 	public List<Sommet> parcoursLargeurArrange(Sommet depart, Sommet arrivee) {
@@ -315,12 +322,14 @@ class Graph {
 	public HashMap<Integer, Integer> nbSommet_K_Voisins() {
 		HashMap<Integer,Integer> result = new HashMap<Integer,Integer>(); 
 		for(int i=0; i < this.getSommets().size(); i++) {
-			result.put(this.getSommets().get(i).getDegres(), result.get(this.getSommets().get(i).getDegres()) + 1);
+			if(!result.containsKey(this.getSommets().get(i).getDegres()))
+				result.put(this.getSommets().get(i).getDegres(), 1);
+			else
+				result.put(this.getSommets().get(i).getDegres(), result.get(this.getSommets().get(i).getDegres()) + 1);
+			
 		}
 		return result;
 	}
-	
-	
 	
 	public void ajoutSommet(Sommet p_sommet) {
 		getSommets().add(p_sommet);
