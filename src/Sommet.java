@@ -87,22 +87,25 @@ public class Sommet {
 	
 	
 	//TODO
-		public static void main(String[] args) {
+	public static void main(String[] args) {
 			
-			Graph graph = new Graph();
-			graph.lectureFichier("motsdelongueur6.txt");
-			System.out.println("1) Graph construit");
-			System.out.println("2) Le nombre de sommet est de "+graph.getSommets().size());
-			System.out.println("   Le nombre d'arc est de "+graph.getArcs().size());
-			List<List<Sommet>> connexe = graph.nombreComposantesConnexes();
-			System.out.println("3) Le nombre de composantes connexes est de " + connexe.size());
-			System.out.println("4) Le nombre de mots sans voisin est de " + graph.nbComposante_N_mots(connexe, 1));
-			System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de " + graph.nbComposante_N_mots(connexe, 2));
-			System.out.println("6) " + graph.nbSommet_K_Voisins());
-			ArrayList<Sommet> chaine = graph.parcoursLargeurArrange(graph.getIndexAtName("GRAPHE"), graph.getIndexAtName("CAMION"));
-			System.out.println("7) La plus courte chaine entre GRAPHE et CAMION est de "+chaine.get(0).getValeur());
-			System.out.println("   Cette chaine est composée de "+chaine.toString());
-		}
+		Graph graph = new Graph();
+		graph.lectureFichier("motsdelongueur6.txt");
+		System.out.println("1) Graph construit");
+		System.out.println("2) Le nombre de sommet est de "+graph.getSommets().size());
+		System.out.println("   Le nombre d'arc est de "+graph.getArcs().size());
+		List<List<Sommet>> connexe = graph.nombreComposantesConnexes();
+		System.out.println("3) Le nombre de composantes connexes est de " + connexe.size());
+		System.out.println("4) Le nombre de mots sans voisin est de " + graph.nbComposante_N_mots(connexe, 1));
+		System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de " + graph.nbComposante_N_mots(connexe, 2));
+		System.out.println("6) " + graph.nbSommet_K_Voisins());
+		List<Sommet> chaine = graph.parcoursLargeurArrange(graph.getIndexAtName("GRAPHE"), graph.getIndexAtName("CAMION"));
+		System.out.println("7) La plus courte chaine entre GRAPHE et CAMION est de "+chaine.get(0).getValeur());
+		System.out.println("   Cette chaine est composée de "+chaine.toString());
+		List<Sommet> chaine2 = graph.diametre();
+		System.out.println("8) Le diametre du graphe est " + chaine2.size());
+		System.out.println("   Cette chaine est composée de "+chaine2.toString());
+	}
 }
 
 
@@ -228,9 +231,8 @@ class Graph {
 		}
 	}
 	
-	public ArrayList<Sommet> parcoursLargeurArrange(Sommet depart, Sommet arrivee) {
+	public List<Sommet> parcoursLargeurArrange(Sommet depart, Sommet arrivee) {
 		List<Sommet> temp = new ArrayList<Sommet>();
-		ArrayList<Sommet> chemin = new ArrayList<Sommet>();
 		
 		for(int i = 0; i < this.getSommets().size(); i++) {
 			this.getSommets().get(i).setMarque(false);
@@ -252,9 +254,14 @@ class Graph {
 			}
 			temp.remove(currentSommet);
 		}
-		
-		int index = arrivee.getValeur();
-		temp.add(arrivee);
+		return getChemin(arrivee);
+	}
+	
+	public List<Sommet> getChemin(Sommet s) {
+		List<Sommet> temp = new ArrayList<Sommet>();
+		List<Sommet> chemin = new ArrayList<Sommet>();
+		int index = s.getValeur();
+		temp.add(s);
 		while (temp.size() > 0) {
 			index--;
 			Sommet currentSommet = temp.get(0);
@@ -268,6 +275,17 @@ class Graph {
 			temp.remove(currentSommet);
 		}
 		return chemin;
+	}
+	
+	public List<Sommet> diametre() {
+		Sommet max = this.getSommets().get(0);
+		for(int i=1; i < this.getSommets().size(); i++) {
+			if(this.getSommets().get(i).getValeur() > max.getValeur()) {
+				max = this.getSommets().get(i);
+			}
+		}
+		
+		return getChemin(max);
 	}
 	
 	public List<List<Sommet>> nombreComposantesConnexes() {
