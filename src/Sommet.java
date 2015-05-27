@@ -95,20 +95,28 @@ public class Sommet {
 		Graph graph = new Graph();
 		graph.lectureFichier("motsdelongueur6.txt");
 		System.out.println("1) Graph construit");
+		System.out.println("");
 		System.out.println("2) Le nombre de sommet est de "+graph.getSommets().size());
 		System.out.println("   Le nombre d'arc est de "+graph.getArcs().size());
+		System.out.println("");
 		List<List<Sommet>> connexe = graph.nombreComposantesConnexes();
 		System.out.println("3) Le nombre de composantes connexes est de " + connexe.size());
+		System.out.println("");
 		System.out.println("4) Le nombre de mots sans voisin est de " + graph.nbComposante_N_mots(connexe, 1));
+		System.out.println("");
 		System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de " + graph.nbComposante_N_mots(connexe, 2));
+		System.out.println("");
 		HashMap<Integer, Integer> listeDegre = graph.nbSommet_K_Voisins();
 		System.out.println("6) La liste des sommets avec k voisins (k variant de 1 à 28) :");
 		System.out.println("   Degré=NbSommet =>" + listeDegre);
+		System.out.println("");
 		List<Sommet> chaine = graph.parcoursLargeurArrange(graph.getIndexAtName("GRAPHE"), graph.getIndexAtName("CAMION"));
 		System.out.println("7) La plus courte chaine entre GRAPHE et CAMION est de "+chaine.get(0).getValeur());
 		System.out.println("   Cette chaine est composée de "+chaine.toString());
+		System.out.println("");
 		List<Sommet> chaine2 = graph.diametre();
 		System.out.println("8) Le diametre du graphe est " + chaine2.size());
+		System.out.println("   Nous savons que c'est pas ça, mais on essaie !");
 		System.out.println("   Cette chaine est composée de "+chaine2.toString());
 	}
 }
@@ -287,11 +295,11 @@ class Graph {
 	public List<Sommet> diametre() {
 		Sommet max = this.getSommets().get(0);
 		for(int i=1; i < this.getSommets().size(); i++) {
-			if(this.getSommets().get(i).getValeur() > max.getValeur()) {
+			if(this.getSommets().get(i).getValeur() > max.getValeur()
+			&& this.getSommets().get(i).getValeur() != Integer.MAX_VALUE) {
 				max = this.getSommets().get(i);
 			}
 		}
-		
 		return getChemin(max);
 	}
 	
