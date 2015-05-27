@@ -96,6 +96,10 @@ public class Sommet {
 			System.out.println("3) Le nombre de composantes connexes est de ");
 			System.out.println("4) Le nombre de mots sans voisin est de ");
 			System.out.println("5) Le nombre de composantes composées uniquement de deux mots est de ");
+			System.out.println("6)  ");
+			ArrayList<Sommet> chaine = graph.parcoursLargeurArrange(graph.getIndexAtName("GRAPHE"), graph.getIndexAtName("CAMION"));
+			System.out.println("7) La plus courte chaine entre GRAPHE et CAMION est de "+chaine.get(0).getValeur());
+			System.out.println("   Cette chaine est composée de "+chaine.toString());
 		}
 }
 
@@ -150,6 +154,14 @@ class Graph {
 
 	public Graph() {
 		this(new ArrayList<Sommet>(), new ArrayList<Arc>());
+	}
+	
+	public Sommet getIndexAtName(String nom) {
+		for(int i = 0; i < this.getSommets().size(); i++) {
+			if(this.getSommets().get(i).getNom().equals(nom))
+				return this.getSommets().get(i);
+		}
+		return null;
 	}
 	
 	public List<Sommet> parcoursLargeur(Sommet depart) {
@@ -218,6 +230,48 @@ class Graph {
 		}
 	}
 	
+	public ArrayList<Sommet> parcoursLargeurArrange(Sommet depart, Sommet arrivee) {
+		List<Sommet> temp = new ArrayList<Sommet>();
+		ArrayList<Sommet> chemin = new ArrayList<Sommet>();
+		
+		for(int i = 0; i < this.getSommets().size(); i++) {
+			this.getSommets().get(i).setMarque(false);
+			this.getSommets().get(i).setValeur(Integer.MAX_VALUE);
+		}
+		
+		depart.setMarque(true);
+		depart.setValeur(0);
+		temp.add(depart);
+		
+		while (temp.size() > 0) {
+			Sommet currentSommet = temp.get(0);
+			for(int i = 0; i < currentSommet.getSommetAdjacent().size(); i++) {
+				if(!currentSommet.getSommetAdjacent().get(i).isMarque()) {
+					currentSommet.getSommetAdjacent().get(i).setMarque(true);
+					currentSommet.getSommetAdjacent().get(i).setValeur(currentSommet.getValeur()+1);
+					temp.add(currentSommet.getSommetAdjacent().get(i));
+				}
+			}
+			temp.remove(currentSommet);
+		}
+		
+		int index = arrivee.getValeur();
+		temp.add(arrivee);
+		while (temp.size() > 0) {
+			index--;
+			Sommet currentSommet = temp.get(0);
+			for(int i = 0; i < currentSommet.getSommetAdjacent().size(); i++) {
+				if(currentSommet.getSommetAdjacent().get(i).getValeur() == index) {
+					temp.add(currentSommet.getSommetAdjacent().get(i));
+					break;
+				}
+			}
+			chemin.add(currentSommet);
+			temp.remove(currentSommet);
+		}
+		return chemin;
+	}
+	
 	public List<List<Sommet>> nombreComposantesConnexes(List<Sommet> graphe) {
 		List<List<Sommet>> result = new ArrayList<List<Sommet>>();
 		result.add(this.parcoursLargeur(graphe.get(0)));
@@ -238,6 +292,8 @@ class Graph {
 		}
 		return nb;
 	}
+	
+	
 	
 	public void ajoutSommet(Sommet p_sommet) {
 		getSommets().add(p_sommet);
