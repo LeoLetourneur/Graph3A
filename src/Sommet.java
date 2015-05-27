@@ -1,3 +1,5 @@
+package src;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -211,6 +213,27 @@ class Graph {
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
+	}
+	
+	public List<List<Sommet>> nombreComposantesConnexes(List<Sommet> graphe) {
+		List<List<Sommet>> result = new ArrayList<List<Sommet>>();
+		result.add(this.parcoursLargeur(graphe.get(0)));
+		for(int i=1; i < graphe.size(); i++) {
+			if(!graphe.get(i).isMarque()) {
+				result.add(this.parcoursLargeur(graphe.get(i)));
+			}
+		}
+		return result;
+	}
+	
+	public int nbComposante_N_mots(List<List<Sommet>> connexe, int nbMots) {
+		int nb = 0;
+		for(int i=0; i < connexe.size(); i++) {
+			if(connexe.get(i).size() == nbMots) {
+				nb++;
+			}
+		}
+		return nb;
 	}
 	
 	public void ajoutSommet(Sommet p_sommet) {
